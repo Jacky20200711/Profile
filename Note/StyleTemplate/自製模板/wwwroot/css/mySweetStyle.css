@@ -1,0 +1,16 @@
+.swal-button-font-size, .swal-label-font-size {
+    font-size: 24px !important;
+}
+
+.swal-button-font-size {
+    font-size: 14px !important;
+}
+
+.swal-input-myStyle {
+    width: 80%;
+    font-size: 16px !important;
+}
+
+.swal-validation-message {
+    font-size: 16px !important;
+}

@@ -1,0 +1,376 @@
+# 解決傳送字串送到前端時，會被編碼成 Entity Code
+<script>
+    // 這個函數用來將 Entity Code 轉回原文
+    function decodeEntities(encodedString) {
+        var textArea = document.createElement('textarea');
+        textArea.innerHTML = encodedString;
+        return textArea.value;
+    }
+    var serverMessage = decodeEntities('@TempData["message"]');
+    if (serverMessage.length > 0) {
+        alert(serverMessage);
+    }
+</script>
+        
+
+# 解決 DataTable 的 JS 會以第一個欄位做排序，造成後端排序好的資料被打亂
+1.在 thead 開頭插入一個排版用的 th (若不插入則會造成 Show Entries & 搜尋框消失)
+2.在 tbody 開頭插入一個排版用的 td & 其內容為由小到大的編號
+> 主要思路 : 令第一個欄位為已排序的狀態，即可避免後端送過來的資料被 JS 重新排序
+<thead>
+    <tr>
+        <th style="display:none;">排版用(不顯示)</th>
+        // 略
+    </tr>
+</thead>
+<tbody>
+    @{
+        int sequence = 0;
+        foreach (var m in Model)
+        {
+            sequence++;
+            <tr class="gradeA">
+                <td style="display:none;">@sequence</td> <!-- 令這個欄位(即第一個欄位)為已排序狀態 -->
+                // 略
+            </tr>
+        }
+    }
+</tbody>
+
+# 如何修改 Table 呈現的 Entries 數量 & 搭配自製分頁
+> 修改 wwwroot/js/dataTables/jquery.dataTables.min.js 的2個地方
+1.aLengthMenu:[10,25,50,100] 改成 aLengthMenu:[30,50,80,100]
+2.iDisplayLength:10 改成 iDisplayLength:30
+> 若要搭配自製分頁，且要修改每個分頁的資料數量，則必須修改 iDisplayLength
+
+# 如何去除左側導覽列，並讓 table 佔領全畫面
+1.將左側導覽列相關的HTML刪除
+2.找到 page-wrapper 並修改如下
+<div id="page-wrapper" style="width:100%; margin-left:0%;">
+
+# 在 Table 頂端增加搜尋框的範本(兩個搜尋框佔一列)
+<div class="panel-heading">
+    <form>
+        <div style="display: flex; font-family: Consolas; font-size: 18px; ">
+            <div style="width: 50%;">
+                <label style="position: relative; top: 2px;">phone&nbsp;:&nbsp;</label>
+                <input type="search" name="phone" placeholder="Search by phone" style="position: relative; top: 2px; width: 70%; " maxlength="50" />
+            </div>
+            <div style="width: 50%;">
+                <label style="position: relative; top: 2px;">fname&nbsp;:&nbsp;</label>
+                <input type="search" name="fname" placeholder="Search by fname" style="position: relative; top: 2px; width: 70%;" maxlength="50" />
+            </div>
+        </div>
+        <div style="display: flex; margin-top: 8px; font-family: Consolas; font-size: 18px;">
+            <div style="width: 50%;">
+                <label style="position: relative; top: 2px;">email&nbsp;:&nbsp;</label>
+                <input type="search" name="email" placeholder="Search by email" style="position: relative; top: 2px; width: 70%;" maxlength="50" />
+            </div>
+            <div style="width: 50%;">
+                <button class="btn btn-primary" type="submit" style="margin-left:90px; width:30%;">
+                    <i class="fa fa-search"></i>&nbsp;Search
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+# 隱藏預設的元素
+<script>
+    window.onload = function () {
+        // 隱藏搜尋框
+        document.getElementById("dataTables-example_filter").style.display = "none";
+        // 隱藏 show entries 的下拉選框
+        document.getElementById("dataTables-example_length").style.display = "none";
+        // 隱藏 show entries 第N筆~第K筆的文字框
+        document.getElementById("dataTables-example_info").style.display = "none"; 
+        // 隱藏分頁按鈕
+        document.getElementById("dataTables-example_paginate").style.display = "none";
+    }
+</script>
+
+# 在 Table 頂端的搜尋區域，夾帶 radio 的範本
+<div class="panel-heading">
+    <form>
+        <div style="display: flex; font-family: Consolas; font-size: 18px; ">
+            <div style="width: 50%;">
+                <label style="position: relative; top: 2px;">phone&nbsp;&nbsp;:&nbsp;</label>
+                <input type="search" name="phone" placeholder="Search by phone" style="position: relative; top: 2px; width: 70%; " maxlength="50" />
+            </div>
+            <div style="width: 50%;">
+                <label style="position: relative; top: 2px;">name&nbsp;:&nbsp;</label>
+                <input type="search" name="name" placeholder="Search by name" style="position: relative; top: 2px; width: 70%;" maxlength="50" />
+            </div>
+        </div>
+        <div style="display: flex; margin-top: 8px; font-family: Consolas; font-size: 18px;">
+            <div style="width: 50%;">
+                @{ 
+                    string mTop = "5px";
+                    string rTop = "7px";
+                    string Y_check = "", N_check = "", ALL_check = "";
+                    string radioSize = "18px";
+                    if(TempData["MsgQuestion_search_status"] != null)
+                    {
+                        if ($"{TempData["MsgQuestion_search_status"]}".Equals("Y"))
+                        {
+                            Y_check = "checked";
+                        }
+                        else if ($"{TempData["MsgQuestion_search_status"]}".Equals("N"))
+                        {
+                            N_check = "checked";
+                        }
+                        else if ($"{TempData["MsgQuestion_search_status"]}".Equals("ALL"))
+                        {
+                            ALL_check = "checked";
+                        }
+                    }
+                }
+                <label style="position: relative; top: @mTop;">status&nbsp;:&nbsp;</label>
+                <label style="position: relative; top: @mTop;">Y</label>
+                <input type="radio" name="status" style="position: relative; top: @rTop; height: @radioSize; width: @radioSize; cursor:pointer;" value="Y" @Y_check />&nbsp;&nbsp;
+                <label style="position: relative; top: @mTop;">N</label>
+                <input type="radio" name="status" style="position: relative; top: @rTop; height: @radioSize; width: @radioSize; cursor:pointer;" value="N" @N_check />&nbsp;&nbsp;
+                <label style="position: relative; top: @mTop;">ALL</label>
+                <input type="radio" name="status" style="position: relative; top: @rTop; height: @radioSize; width: @radioSize; cursor:pointer;" value="ALL" @ALL_check />
+            </div>
+            <div style="width: 50%;">
+                <button class="btn btn-primary" type="submit" style="margin-left:80px; width:30%;">
+                    <i class="fa fa-search"></i>&nbsp;Search
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+# 表單範例 : 每一列擁有兩個欄位/新增處理/處理列表
+@model uloanAdmin.Models.Entities.uloan
+@using uloanAdmin.Models.Entities
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6">
+                <h1 class="page-header">Deal the loan</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Check data of the loan
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <!-- 列出案件資料，且每一列擁有兩個欄位 -->
+                                <form role="form" asp-controller="Loan" asp-action="Deal">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>phone</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="phone" value="@Model.phone" readonly="readonly">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>pro_type_name</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="pro_type_name" value="@Model.pro_type_name" readonly="readonly">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>isIdentical</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="isIdentical" value="@Model.isIdentical" readonly="readonly">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>confidence</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="confidence" value="@Model.confidence" readonly="readonly">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <!-- 新增處理內容 -->
+                <form asp-controller="Loan" asp-action="Deal" method="post">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h1 class="page-header">Create deal content</h1>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="col-md-12">
+                            <br>
+                            <div class="form-group">
+                                <textarea class="form-control" name="deal_content" rows="8"></textarea>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <input type="submit" class="btn btn-primary" value="Send" />
+                                <a class="btn btn-warning" href="@Url.Action("Index", "Loan")">Back to list</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <br />
+                <!-- 顯示處理列表 -->
+                @if (ViewBag.LoanLogList != null)
+                {
+                    List<uloan_log> ulogs = (List<uloan_log>)ViewBag.LoanLogList;
+
+                    if (ulogs.Count != 0)
+                    {
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h1 class="page-header">List of deal content</h1>
+                            </div>
+                        </div>
+
+                        foreach (var log in ulogs)
+                        {
+                            <label>@log.modify_user &nbsp;&nbsp;&nbsp;&nbsp; @Convert.ToDateTime(log.modify_date).ToString("yyyy-MM-dd HH:mm")</label>
+                            <textarea type="text" class="form-control" rows="8">@log.msg</textarea>
+                            <br />
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+# 將表單的資料橫向區分成三塊(由左而右)，且令每塊的每列擁有1或2個欄位
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Deal the loan</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Check data of the loan
+                    </div>
+                    <div style="margin-top:12px; margin-left:15px;">
+                        Car model : crv AX55678 
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div style="display:flex;">
+                                    <!-- 裝載證件辨識資料的框框 -->
+                                    @{ 
+                                        // 定義三個區域的寬度比例
+                                        string size_area_1 = "30%";
+                                        string size_area_2 = "35%";
+                                        string size_area_3 = "35%";
+                                    }
+                                    <div class="panel panel-default" style="/*border:1px solid blue;*/ width:@size_area_1;">
+                                        <div class="panel-heading">
+                                            OCR data
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>1</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="phone" value="phone" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>2</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="fname" value="fname" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>3</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="pro_type" value="pro_type" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 裝載申請資料的框框，令每一列擁有兩個欄位 -->
+                                    <div class="panel panel-default" style="/*border:1px solid green;*/ width:@size_area_2;">
+                                        <div class="panel-heading">
+                                            User data
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>4</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="PH_CID" value="PH_CID" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>5</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="PH_NAME" value="PH_NAME" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>6</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="PH_BIRTH" value="PH_BIRTH" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 裝載保人資料的框框，令每一列擁有兩個欄位 -->
+                                    <div class="panel panel-default" style="/*border:1px solid brown;*/ width:@size_area_3;">
+                                        <div class="panel-heading">
+                                            Co-maker data
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>7</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="UMID_CID" value="UMID_CID" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>8</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="UMID_NAME" value="UMID_NAME" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>9</label>
+                                            <div class="form-group">
+                                                <input class="form-control" name="UMID_BIRTH" value="UMID_BIRTH" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+# 如何解決左側選單若有相同的連結，則點選其中一個之後，擁有相同的主選單會同時被展開
+> 令超連結攜帶一個無意義且不同的參數，令連結不同即可
+> 下列範例即可解決(當應徵列表被點選時，可以避免另一個主選單同時被展開)
+<ul class="nav" id="side-menu">
+    <li>
+        <a style="font-weight:700;" href="#">&nbsp;主選單1<span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level">
+            <li>
+                <a href="@Url.Action("Index", "Apply", new { list = "A" })">應徵列表<span class="fa arrow"></span></a>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <a style="font-weight:700;" href="#">&nbsp;主選單2<span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level">
+            <li>
+                <a href="@Url.Action("Index", "Apply", new { list = "B" })">應徵列表<span class="fa arrow"></span></a>
+            </li>
+        </ul>
+    </li>
+</ul>

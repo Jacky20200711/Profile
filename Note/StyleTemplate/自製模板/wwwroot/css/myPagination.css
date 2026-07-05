@@ -1,0 +1,50 @@
+/* 分頁按鈕群的樣式 */
+.btn_page {
+    font-size: 14px;
+    width: 50px; /* 若不夠寬則塞不進四位數 */
+    height: 40px;
+    color: #337ab7;
+    background-color: white;
+    margin-left: -5px;
+    border-left: none;
+    border: 1px solid #ddd;
+}
+
+.btn_page:hover {
+    color: black;
+    background-color: #EEEEEE;
+}
+
+.btn_prev {
+    font-size: 14px;
+    width: 40px;
+    height: 40px;
+    color: #337ab7;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.btn_prev:hover {
+    color: black;
+    background-color: #EEEEEE;
+}
+
+.btn_next {
+    font-size: 14px;
+    width: 40px;
+    height: 40px;
+    color: #337ab7;
+    background-color: white;
+    border-left: none;
+    margin-left: -5px;
+    border: 1px solid #ddd;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.btn_next:hover {
+    color: black;
+    background-color: #EEEEEE;
+}
