@@ -4,7 +4,6 @@
 3.富邦銀行 : 012-81680007450563 (餘額: 55486   2026/09/04)
 4.上海銀行 : 011-55203000173346 (餘額: 25      2026/08/07) => 悠遊卡估能故障，已封存
 > 存款合計 : 1751491 + 1789 + (55486 - 0) + 3200 = 1811966 (2026/09/04)
-> 持股累計 : 3300 (2026/09/01)
 https://ibank.firstbank.com.tw/NetBank/index103.html?第一銀行
 https://mybank.landbank.com.tw/DesktopDefault.htm?土地銀行
 https://ebank.taipeifubon.com.tw/B2C/common/Index.faces?富邦銀行
