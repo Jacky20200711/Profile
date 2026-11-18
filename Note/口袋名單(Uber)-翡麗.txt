@@ -1,12 +1,13 @@
-# 置頂規則 : 天冷禁止吃辣(包含酸辣湯、打拋豬、黑胡椒)，否則喉嚨會GG
+# 禁止項目 : 黑胡椒麵、酸辣湯(除非確定不辣)
+# 禁止原因 : 喉嚨直接陣亡
 
 # ★★★★★ 樂華夜市-老張刀麵屋-保平店
 https://www.ubereats.com/tw/store/樂華夜市-老張刀麵屋-保平店/k2Je-g9tVcGX6CJRlnKWaA?diningMode=DELIVERY
-> 炸醬麵 + 青菜蛋花湯
+> 木須炒麵/炸醬麵 + 青菜蛋花湯
 
 # ★★★★★ 炒食尚 (休息時間:週二)
 https://www.ubereats.com/tw/store/炒食尚炒飯炒河粉炒板條專賣店/-2eELc1FWACjQvkk-Mm9WQ?diningMode=DELIVERY
-> 沙茶炒麵(115)/培根蛋炒飯(125)/(+肉25/香腸25/青菜20/茄汁20) + 紫菜蛋花湯(45)
+> 原味炒麵(105)/培根蛋炒飯(125)/(+肉25/蛋20/青菜20/茄汁20) + 紫菜蛋花湯(45)
 
 # ★★★★★ 品豪平價鐵板燒
 https://www.ubereats.com/tw/store/品豪平價鐵板燒/sqq8SIjGVPyplkdb8ufgIQ?diningMode=DELIVERY
